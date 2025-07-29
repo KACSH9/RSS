@@ -129,10 +129,13 @@
           p.textContent = desc;
 
           const a = document.createElement("a");
-          a.href = link;
-          a.target = "_blank";
+          a.href = "#";
           a.textContent = "阅读全文 »";
           a.className = "readmore";
+          a.addEventListener("click", (e) => {
+            e.preventDefault();
+            window.open(link, '_blank', 'noopener,noreferrer');
+          });
 
           details.appendChild(summary);
           details.appendChild(p);
