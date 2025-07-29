@@ -53,59 +53,55 @@
       background-color: white;
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      padding: 1rem;
+      padding: 0;
       max-height: 300px;
-      overflow-y: auto;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
       display: flex;
       flex-direction: column;
-    }
-
-    .feed-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
     }
 
     .feed-card h2 {
       font-size: 1.1rem;
       font-weight: 600;
       color: #333;
-      flex-shrink: 0;
       background-color: white;
-      position: sticky;
-      top: 0;
-      padding-bottom: 0.5rem;
-      margin-bottom: 0.75rem;
-      z-index: 1;
+      margin: 0;
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+      flex-shrink: 0;
     }
 
-    .feed-card details {
+    .feed-scroll {
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .feed-scroll details {
       margin-bottom: 0.75rem;
     }
 
-    .feed-card summary {
+    .feed-scroll summary {
       cursor: pointer;
       color: #007bff;
       font-weight: 500;
     }
 
-    .feed-card summary:hover {
+    .feed-scroll summary:hover {
       text-decoration: underline;
     }
 
-    .feed-card p {
+    .feed-scroll p {
       margin: 0.25rem 0 0.5rem 0;
       line-height: 1.4;
     }
 
-    .feed-card a.readmore {
+    .feed-scroll a.readmore {
       display: inline-block;
       font-size: 0.9rem;
       color: #007bff;
       text-decoration: underline;
     }
 
-    .feed-card a.readmore:hover {
+    .feed-scroll a.readmore:hover {
       text-decoration: none;
     }
 
@@ -130,11 +126,13 @@
 
   <main class="container">
     <div class="grid">
-      <div class="feed-card" id="feed-mf">
+      <div class="feed-card">
         <h2>中国外交部每日新闻</h2>
+        <div class="feed-scroll" id="feed-mf"></div>
       </div>
-      <div class="feed-card" id="feed-cmsa">
+      <div class="feed-card">
         <h2>中国海事局每日新闻</h2>
+        <div class="feed-scroll" id="feed-cmsa"></div>
       </div>
     </div>
   </main>
@@ -192,4 +190,5 @@
   </script>
 </body>
 </html>
+
 
