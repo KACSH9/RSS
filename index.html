@@ -5,34 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>全球海事热闻</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="https://img.icons8.com/ios/100/anchor--v2.png">
+    <script>
+        async function loadRSS(feedUrl, containerId) {
+            const res = await fetch(feedUrl);
+            const xml = await res.text();
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xml, "text/xml");
+            const items = xmlDoc.querySelectorAll("item");
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
+
+            items.forEach((item, index) => {
+                const title = item.querySelector("title")?.textContent || "无标题";
+                const link = item.querySelector("link")?.textContent || "";
+                const description = item.querySelector("description")?.textContent || "无摘要";
+
+                const card = document.createElement("div");
+                card.className = "card";
+
+                const titleEl = document.createElement("h3");
+                titleEl.textContent = `${index + 1}. ${title}`;
+                titleEl.className = "title";
+                titleEl.onclick = () => {
+                    const desc = card.querySelector(".desc");
+                    desc.style.display = desc.style.display === "none" ? "block" : "none";
+                };
+
+                const descEl = document.createElement("div");
+                descEl.className = "desc";
+                descEl.style.display = "none";
+                descEl.innerHTML = `<p>${description}</p><p><a href="${link}" target="_blank">阅读全文</a></p>`;
+
+                card.appendChild(titleEl);
+                card.appendChild(descEl);
+                container.appendChild(card);
+            });
+        }
+
+        window.onload = () => {
+            loadRSS("https://kacsh9.github.io/RSS/Ministry%20of%20Foreign%20Affairs%20of%20China.xml", "feed1");
+            loadRSS("https://kacsh9.github.io/RSS/China%20Maritime%20Safety%20Administration.xml", "feed2");
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #007bff;
+            color: white;
+            padding: 1em;
+            text-align: center;
+        }
+        main {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1em;
+            padding: 1em;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            padding: 1em;
+        }
+        .section h2 {
+            margin-top: 0;
+            font-size: 1.2em;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 0.5em;
+        }
+        .card {
+            margin-bottom: 1em;
+        }
+        .card h3 {
+            margin: 0;
+            cursor: pointer;
+            color: #007bff;
+        }
+        .desc {
+            padding: 0.5em 0;
+            font-size: 0.95em;
+            color: #333;
+        }
+        a {
+            color: #dc3545;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <h1>
-                <img src="https://img.icons8.com/ios/100/anchor--v2.png" alt="海事热闻图标" style="height: 1em; margin-right: 0.25em; vertical-align: middle; filter: brightness(0) invert(1);">
-                全球海事热闻
-            </h1>
-        </div>
+    <header>
+        <h1>全球海事热闻</h1>
     </header>
-
-    <main class="container">
-        <section class="feed-section">
+    <main>
+        <div class="section">
             <h2>中国外交部每日新闻</h2>
-            <iframe src="https://kacsh9.github.io/RSS/Ministry%20of%20Foreign%20Affairs%20of%20China.xml" width="100%" height="200"></iframe>
-        </section>
-
-        <section class="feed-section">
-            <h2>中国海事局每日新闻</h2>
-            <iframe src="https://kacsh9.github.io/RSS/China%20Maritime%20Safety%20Administration.xml" width="100%" height="200"></iframe>
-        </section>
-    </main>
-
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 全球海事热闻. All Rights Reserved.</p>
+            <div id="feed1"></div>
         </div>
-    </footer>
+        <div class="section">
+            <h2>中国海事局每日新闻</h2>
+            <div id="feed2"></div>
+        </div>
+    </main>
 </body>
 </html>
