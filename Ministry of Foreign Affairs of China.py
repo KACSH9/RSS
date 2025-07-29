@@ -190,6 +190,6 @@ for time, title, url, news, section in unique_news:
     fe.pubDate(time + "T08:00:00+08:00")  # ISO 格式时间
 
 # 保存成 XML 文件
-fg.rss_file('fmprc_news_feed.xml', encoding='utf-8')
+fg.rss_file('Ministry of Foreign Affairs of China.xml', encoding='utf-8')
 
 print("✅ RSS Feed 文件已生成：Ministry of Foreign Affairs of China.xml")
