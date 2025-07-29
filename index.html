@@ -52,18 +52,25 @@
       margin-bottom: 0.75rem;
     }
 
-    .feed-card ul {
-      padding-left: 1.2rem;
-      margin: 0;
-    }
-
-    .feed-card li {
+    .feed-card details {
       margin-bottom: 0.5rem;
     }
 
-    .feed-card a {
-      text-decoration: none;
+    .feed-card summary {
+      cursor: pointer;
       color: #007bff;
+    }
+
+    .feed-card p {
+      margin: 0.25rem 0 0.5rem 0;
+    }
+
+    .feed-card a.readmore {
+      display: inline-block;
+      margin-top: 0.25rem;
+      font-size: 0.9rem;
+      color: #007bff;
+      text-decoration: underline;
     }
 
     footer {
@@ -83,11 +90,9 @@
     <div class="grid">
       <div class="feed-card" id="feed-mf">
         <h2>中国外交部每日新闻</h2>
-        <ul></ul>
       </div>
       <div class="feed-card" id="feed-cmsa">
         <h2>中国海事局每日新闻</h2>
-        <ul></ul>
       </div>
     </div>
   </main>
@@ -104,23 +109,32 @@
         const parser = new DOMParser();
         const xml = parser.parseFromString(text, "text/xml");
         const items = xml.querySelectorAll("item");
-        const ul = document.querySelector(`#${containerId} ul`);
+        const container = document.querySelector(`#${containerId}`);
 
         items.forEach((item, idx) => {
           if (idx >= 10) return;
-          const li = document.createElement("li");
           const title = item.querySelector("title")?.textContent || "无标题";
           const link = item.querySelector("link")?.textContent || "#";
           const desc = item.querySelector("description")?.textContent || "";
 
+          const details = document.createElement("details");
+          const summary = document.createElement("summary");
+          summary.textContent = title;
+
+          const p = document.createElement("p");
+          p.textContent = desc;
+
           const a = document.createElement("a");
           a.href = link;
           a.target = "_blank";
-          a.textContent = title;
-          a.title = desc;
+          a.textContent = "阅读全文 »";
+          a.className = "readmore";
 
-          li.appendChild(a);
-          ul.appendChild(li);
+          details.appendChild(summary);
+          details.appendChild(p);
+          details.appendChild(a);
+
+          container.appendChild(details);
         });
       } catch (err) {
         console.error(`加载失败: ${url}`, err);
@@ -132,4 +146,3 @@
   </script>
 </body>
 </html>
-
