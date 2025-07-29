@@ -1,115 +1,135 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全球海事热闻</title>
-    <link rel="stylesheet" href="style.css">
-    <script>
-        async function loadRSS(feedUrl, containerId) {
-            const res = await fetch(feedUrl);
-            const xml = await res.text();
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xml, "text/xml");
-            const items = xmlDoc.querySelectorAll("item");
-            const container = document.getElementById(containerId);
-            container.innerHTML = "";
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全球海事热闻</title>
+  <link rel="icon" href="https://img.icons8.com/ios/100/anchor--v2.png">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
 
-            items.forEach((item, index) => {
-                const title = item.querySelector("title")?.textContent || "无标题";
-                const link = item.querySelector("link")?.textContent || "";
-                const description = item.querySelector("description")?.textContent || "无摘要";
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
 
-                const card = document.createElement("div");
-                card.className = "card";
+    header h1 img {
+      height: 1.2em;
+      vertical-align: middle;
+      margin-right: 0.5em;
+    }
 
-                const titleEl = document.createElement("h3");
-                titleEl.textContent = `${index + 1}. ${title}`;
-                titleEl.className = "title";
-                titleEl.onclick = () => {
-                    const desc = card.querySelector(".desc");
-                    desc.style.display = desc.style.display === "none" ? "block" : "none";
-                };
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 1rem;
+    }
 
-                const descEl = document.createElement("div");
-                descEl.className = "desc";
-                descEl.style.display = "none";
-                descEl.innerHTML = `<p>${description}</p><p><a href="${link}" target="_blank">阅读全文</a></p>`;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
 
-                card.appendChild(titleEl);
-                card.appendChild(descEl);
-                container.appendChild(card);
-            });
-        }
+    .feed-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 1rem;
+      overflow-y: auto;
+      max-height: 250px;
+    }
 
-        window.onload = () => {
-            loadRSS("https://kacsh9.github.io/RSS/Ministry%20of%20Foreign%20Affairs%20of%20China.xml", "feed1");
-            loadRSS("https://kacsh9.github.io/RSS/China%20Maritime%20Safety%20Administration.xml", "feed2");
-        }
-    </script>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen;
-            background: #f4f6f9;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background: #007bff;
-            color: white;
-            padding: 1em;
-            text-align: center;
-        }
-        main {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1em;
-            padding: 1em;
-        }
-        .section {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            padding: 1em;
-        }
-        .section h2 {
-            margin-top: 0;
-            font-size: 1.2em;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 0.5em;
-        }
-        .card {
-            margin-bottom: 1em;
-        }
-        .card h3 {
-            margin: 0;
-            cursor: pointer;
-            color: #007bff;
-        }
-        .desc {
-            padding: 0.5em 0;
-            font-size: 0.95em;
-            color: #333;
-        }
-        a {
-            color: #dc3545;
-            text-decoration: none;
-        }
-    </style>
+    .feed-card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .feed-card ul {
+      padding-left: 1.2rem;
+      margin: 0;
+    }
+
+    .feed-card li {
+      margin-bottom: 0.5rem;
+    }
+
+    .feed-card a {
+      text-decoration: none;
+      color: #007bff;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      color: #999;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>全球海事热闻</h1>
-    </header>
-    <main>
-        <div class="section">
-            <h2>中国外交部每日新闻</h2>
-            <div id="feed1"></div>
-        </div>
-        <div class="section">
-            <h2>中国海事局每日新闻</h2>
-            <div id="feed2"></div>
-        </div>
-    </main>
+  <header>
+    <h1><img src="https://img.icons8.com/ios/100/anchor--v2.png" alt="图标">全球海事热闻</h1>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <div class="feed-card" id="feed-mf">
+        <h2>中国外交部每日新闻</h2>
+        <ul></ul>
+      </div>
+      <div class="feed-card" id="feed-cmsa">
+        <h2>中国海事局每日新闻</h2>
+        <ul></ul>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 全球海事热闻. All Rights Reserved.
+  </footer>
+
+  <script>
+    async function loadFeed(containerId, url) {
+      try {
+        const res = await fetch(url);
+        const text = await res.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(text, "text/xml");
+        const items = xml.querySelectorAll("item");
+        const ul = document.querySelector(`#${containerId} ul`);
+
+        items.forEach((item, idx) => {
+          if (idx >= 10) return;
+          const li = document.createElement("li");
+          const title = item.querySelector("title")?.textContent || "无标题";
+          const link = item.querySelector("link")?.textContent || "#";
+          const desc = item.querySelector("description")?.textContent || "";
+
+          const a = document.createElement("a");
+          a.href = link;
+          a.target = "_blank";
+          a.textContent = title;
+          a.title = desc;
+
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      } catch (err) {
+        console.error(`加载失败: ${url}`, err);
+      }
+    }
+
+    loadFeed("feed-mf", "https://kacsh9.github.io/RSS/Ministry%20of%20Foreign%20Affairs%20of%20China.xml");
+    loadFeed("feed-cmsa", "https://kacsh9.github.io/RSS/China%20Maritime%20Safety%20Administration.xml");
+  </script>
 </body>
 </html>
+
