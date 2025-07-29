@@ -33,15 +33,15 @@
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: auto;
       padding: 2rem 1rem;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-      gap: 2rem;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
     }
 
     .feed-card {
@@ -49,7 +49,7 @@
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       padding: 1rem;
-      max-height: 500px;
+      max-height: 400px;
       overflow-y: auto;
     }
 
@@ -91,6 +91,12 @@
       color: #666;
       font-size: 0.9rem;
     }
+
+    @media (max-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+    }
   </style>
 </head>
 <body>
@@ -114,23 +120,10 @@
   </footer>
 
   <script>
-    async function loadFeed(containerId, url) {
+    async function loadFeed(containerId, url, maxItems = 14) {
       try {
-        const res = await fetch(url, {
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-            "Referer": "https://www.msa.gov.cn/",
-            "Connection": "keep-alive",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Upgrade-Insecure-Requests": "1",
-            "Sec-Fetch-Site": "same-origin",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-User": "?1",
-            "Sec-Fetch-Dest": "document"
-          }
-        });
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const text = await res.text();
         const parser = new DOMParser();
         const xml = parser.parseFromString(text, "text/xml");
@@ -138,7 +131,7 @@
         const container = document.querySelector(`#${containerId}`);
 
         items.forEach((item, idx) => {
-          if (idx >= 10) return;
+          if (idx >= maxItems) return;
           const title = item.querySelector("title")?.textContent || "无标题";
           const link = item.querySelector("link")?.textContent || "#";
           const desc = item.querySelector("description")?.textContent || "";
@@ -151,13 +144,11 @@
           p.textContent = desc;
 
           const a = document.createElement("a");
-          a.href = "#";
+          a.href = link;
           a.textContent = "阅读全文 »";
           a.className = "readmore";
-          a.addEventListener("click", (e) => {
-            e.preventDefault();
-            window.open(link, '_blank', 'noopener,noreferrer');
-          });
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
 
           details.appendChild(summary);
           details.appendChild(p);
@@ -167,13 +158,16 @@
         });
       } catch (err) {
         console.error(`加载失败: ${url}`, err);
+        const container = document.querySelector(`#${containerId}`);
+        container.innerHTML += `<p style="color:red">加载失败，请稍后再试。</p>`;
       }
     }
 
-    loadFeed("feed-mf", "https://kacsh9.github.io/RSS/Ministry%20of%20Foreign%20Affairs%20of%20China.xml");
-    loadFeed("feed-cmsa", "https://kacsh9.github.io/RSS/China%20Maritime%20Safety%20Administration.xml");
+    loadFeed("feed-mf", "https://kacsh9.github.io/RSS/Ministry%20of%20Foreign%20Affairs%20of%20China.xml", 14);
+    loadFeed("feed-cmsa", "https://kacsh9.github.io/RSS/China%20Maritime%20Safety%20Administration.xml", 14);
   </script>
 </body>
 </html>
+
 
 
