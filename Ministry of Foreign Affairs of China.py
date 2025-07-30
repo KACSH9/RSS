@@ -4,7 +4,7 @@ import requests
 import re
 from urllib.parse import urljoin
 import time as time_module
-from datetime import datetime
+from datetime import datetime, timedelta
 from feedgen.feed import FeedGenerator
 
 # AI总结摘要
@@ -145,34 +145,39 @@ extract_detail_time_section('发言人表态', 'https://www.fmprc.gov.cn/fyrbt_6
 extract_rightbox_list('讲话全文', 'https://www.mfa.gov.cn/web/ziliao_674904/zyjh_674906/', '//div[@class="rightbox"]//li')
 extract_rightbox_list('声明公报', 'https://www.mfa.gov.cn/web/ziliao_674904/1179_674909/', '//div[@class="rightbox"]//li')
 
-# 筛选当日新闻
-today = datetime.now().strftime('%Y-%m-%d')   # 获取当前日期   datetime.now().strftime('%Y-%m-%d')
-today_news = []
+# 获取今天和前一天日期
+today = datetime.now()
+yesterday = today - timedelta(days=1)
+
+# 筛选近两日新闻
+recent_news = []
 for time, title, url, news, section in all_news:
-    if time == today:
-        today_news.append((time, title, url, news, section))
+    try:
+        news_date = datetime.strptime(time, "%Y-%m-%d")
+        if yesterday <= news_date <= today:
+            recent_news.append((time, title, url, news, section))
+    except:
+        continue  # 跳过格式异常的数据
 
 # 根据标题去重（相同标题的认为是同一条新闻）
 seen_titles = set()
 unique_news = []
 
-for time, title, url, news, section in today_news:
-    # 彻底清理标题：去除所有空白字符，统一比较
+for time, title, url, news, section in recent_news:
     clean_title = re.sub(r'\s+', '', title) if title else ''
     if clean_title and clean_title not in seen_titles:
         seen_titles.add(clean_title)
-        unique_news.append((time, title.strip(), url, news, section))  # 保存原始标题（只去前后空格）
+        unique_news.append((time, title.strip(), url, news, section))
 
-# 输出
+# 输出新闻并翻译摘要
 for time, title, url, news, section in unique_news:
     summary = get_news_summary(news)
     print(f"时间：{time}")
     print(f"题目：{title}")
     print(f"摘要：{summary}")
     print(f"链接：{url}")
-    print()  # 空行分隔
-    time_module.sleep(0.5)  # 避免API限制
-
+    print()
+    time_module.sleep(0.5)  # 避免触发 API 限速
 
 # 创建 Feed
 fg = FeedGenerator()
@@ -193,3 +198,8 @@ for time, title, url, news, section in unique_news:
 fg.rss_file('Ministry of Foreign Affairs of China.xml', encoding='utf-8')
 
 print("✅ RSS Feed 文件已生成：Ministry of Foreign Affairs of China.xml")
+
+
+
+
+
