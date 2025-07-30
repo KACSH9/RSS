@@ -39,6 +39,9 @@ jobs:
           python "Japan Maritime Security University.py" &
           python "State Department.py" &
           python "Maritime Administration of the United States Department of Transportation.py" &
+          python "United Nations Maritime Court.py" &
+          python "Vietnam Diplomatic Academy.py" &
+          python "Ministry of Foreign Affairs of Vietnam.py" &
 
           wait  # 等待所有后台任务执行完成
 
