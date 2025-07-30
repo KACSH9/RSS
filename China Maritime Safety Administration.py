@@ -3,7 +3,7 @@ import re
 from lxml import etree
 from urllib.parse import urljoin
 import time as time_module
-from datetime import datetime
+from datetime import datetime, timedelta
 from feedgen.feed import FeedGenerator
 
 # AI总结摘要
@@ -74,18 +74,24 @@ fetch_news_1("通知公告", "https://www.msa.gov.cn/page/channelArticles.do?typ
 fetch_news_1("船舶检验", "https://www.msa.gov.cn/page/channelArticles.do?type=xxgk&channelids=CAF16466-2A5C-4AAB-82EB-61B4D45937E7&alone=true&currentPage=1", '//li')
 fetch_news_1("法定主动公开内容", "https://www.msa.gov.cn/page/openInfo/articleList.do?channelId=33&pageSize=20&pageNo=1&isParent=1&type=xxgk", '//li')
 
-# 筛选当日新闻
-today = datetime.now().strftime('%Y-%m-%d')
-today_news = []
+# 查询近7日新闻
+today = datetime.now()
+seven_days_ago = today - timedelta(days=7)
+
+recent_news = []
 for time, title, url, news, section in all_news:
-    if time == today:
-        today_news.append((time, title, url, news, section))
+    try:
+        news_date = datetime.strptime(time, "%Y-%m-%d")
+        if seven_days_ago <= news_date <= today:
+            recent_news.append((time, title, url, news, section))
+    except:
+        continue
 
 # 根据标题去重（相同标题的认为是同一条新闻）
 seen_titles = set()
 unique_news = []
 
-for time, title, url, news, section in today_news:
+for time, title, url, news, section in recent_news:
     # 彻底清理标题：去除所有空白字符，统一比较
     clean_title = re.sub(r'\s+', '', title) if title else ''
     if clean_title and clean_title not in seen_titles:
