@@ -146,7 +146,7 @@ for date_str, title, news, full_link in today_news:
 # 获取今天日期
 today = datetime.now()
 # 获取14天前的日期
-fourteen_days_ago = today - timedelta(days=14)
+fourteen_days_ago = today - timedelta(days=10)
 
 # 筛选最近14天内新闻
 recent_news = []
