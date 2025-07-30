@@ -145,17 +145,18 @@ extract_detail_time_section('发言人表态', 'https://www.fmprc.gov.cn/fyrbt_6
 extract_rightbox_list('讲话全文', 'https://www.mfa.gov.cn/web/ziliao_674904/zyjh_674906/', '//div[@class="rightbox"]//li')
 extract_rightbox_list('声明公报', 'https://www.mfa.gov.cn/web/ziliao_674904/1179_674909/', '//div[@class="rightbox"]//li')
 
+
 # 获取今天和前一天日期
 today = datetime.now()
-yesterday = today - timedelta(days=1)
+yesterday = today - timedelta(days=2)
 
 # 筛选近两日新闻
 recent_news = []
-for time, title, url, news, section in all_news:
+for date, title, full_url, news, section in all_news:
     try:
-        news_date = datetime.strptime(time, "%Y-%m-%d")
+        news_date = datetime.strptime(date, "%Y-%m-%d")
         if yesterday <= news_date <= today:
-            recent_news.append((time, title, url, news, section))
+            recent_news.append((date, title, full_url, news, section))
     except:
         continue  # 跳过格式异常的数据
 
@@ -163,19 +164,19 @@ for time, title, url, news, section in all_news:
 seen_titles = set()
 unique_news = []
 
-for time, title, url, news, section in recent_news:
+for date, title, full_url, news, section in recent_news:
     clean_title = re.sub(r'\s+', '', title) if title else ''
     if clean_title and clean_title not in seen_titles:
         seen_titles.add(clean_title)
-        unique_news.append((time, title.strip(), url, news, section))
+        unique_news.append((date, title.strip(), full_url, news, section))
 
 # 输出新闻并翻译摘要
-for time, title, url, news, section in unique_news:
+for date, title, full_url, news, section in unique_news:
     summary = get_news_summary(news)
-    print(f"时间：{time}")
+    print(f"时间：{date}")
     print(f"题目：{title}")
     print(f"摘要：{summary}")
-    print(f"链接：{url}")
+    print(f"链接：{full_url}")
     print()
     time_module.sleep(0.5)  # 避免触发 API 限速
 
@@ -191,14 +192,13 @@ for time, title, url, news, section in unique_news:
     fe = fg.add_entry()
     fe.title(f"[{section}] {title}")
     fe.link(href=url)
-    fe.description(get_news_summary(news))  # 也可直接填 news
+    fe.description(summary)  # 也可直接填 news
     fe.pubDate(time + "T08:00:00+08:00")  # ISO 格式时间
 
 # 保存成 XML 文件
 fg.rss_file('Ministry of Foreign Affairs of China.xml', encoding='utf-8')
 
 print("✅ RSS Feed 文件已生成：Ministry of Foreign Affairs of China.xml")
-
 
 
 
