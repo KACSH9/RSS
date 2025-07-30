@@ -68,6 +68,7 @@ for date, title, intro, link in all_news:
         today_news.append((date, title, intro, link))
 '''
 
+
 # 获取今天日期
 today = datetime.now()
 # 获取14天前的日期
@@ -83,15 +84,21 @@ for date, title, intro, link in all_news:
     except:
         continue  # 跳过格式不对的日期
 
+# 缓存翻译后的新闻
+translated_news = []
+
 for date, title, intro, link in recent_news:
     translation_title = get_news_summary(title, is_title=True)
     translation_intro = get_news_summary(intro, is_title=False)
+    translated_news.append((date, translation_title, translation_intro, link))
+
     print(f"时间：{date}")
     print(f"题目：{translation_title}")
     print(f"摘要：{translation_intro}")
     print(f"链接：{link}")
     print()
-    time_module.sleep(0.5)
+
+    time_module.sleep(0.5)  # 避免API限速
 
 
 # 创建 Feed
@@ -101,16 +108,14 @@ fg.link(href="https://www.wto.org", rel="alternate")
 fg.description("由自定义爬虫抓取的世界贸易组织最新新闻摘要")
 fg.language('zh-cn')
 
-# 添加每条新闻
-for date, title, intro, link in recent_news:
+# 添加每条翻译好的新闻
+for date, trans_title, trans_intro, link in translated_news:
     fe = fg.add_entry()
-    fe.title(title)  # 如果需要可加标签前缀
+    fe.title(trans_title)
     fe.link(href=link)
-    fe.description(get_news_summary(intro))
-    fe.pubDate(date + "T08:00:00+08:00")  # ISO时间格式
-
+    fe.description(trans_intro)
+    fe.pubDate(date + "T08:00:00+08:00")
 
 # 保存成 XML 文件
 fg.rss_file('World Trade Organization.xml', encoding='utf-8')
-
 print("✅ RSS Feed 文件已生成： World Trade Organization.xml")
