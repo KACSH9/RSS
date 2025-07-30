@@ -111,6 +111,6 @@ for date, title, intro, link in recent_news:
 
 
 # 保存成 XML 文件
-fg.rss_file(' World Trade Organization.xml', encoding='utf-8')
+fg.rss_file('World Trade Organization.xml', encoding='utf-8')
 
 print("✅ RSS Feed 文件已生成： World Trade Organization.xml")
