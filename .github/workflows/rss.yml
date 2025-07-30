@@ -38,6 +38,7 @@ jobs:
           python "Japan Maritime Safety Agency.py" &
           python "Japan Maritime Security University.py" &
           python "State Department.py" &
+          python "Maritime Administration of the United States Department of Transportation.py" &
 
           wait  # 等待所有后台任务执行完成
 
