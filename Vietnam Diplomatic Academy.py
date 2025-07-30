@@ -161,9 +161,9 @@ for date_fmt, title, news, full_url in recent_news:
 
 # 构建 RSS Feed
 fg = FeedGenerator()
-fg.title("越南外交部 RSS")
+fg.title("越南外交学院 RSS")
 fg.link(href="https://www.dav.edu.vn", rel="alternate")
-fg.description("由自定义爬虫抓取的越南外交部最新新闻摘要")
+fg.description("由自定义爬虫抓取的越南外交学院最新新闻摘要")
 fg.language('zh-cn')
 
 # 添加翻译后的新闻
