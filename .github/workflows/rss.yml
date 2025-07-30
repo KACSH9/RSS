@@ -31,12 +31,13 @@ jobs:
           python "World Trade Organization.py" 
           python "International Maritime Organization.py"   
           python "Pacific Islands Forum.py"
+          python "International Seabed Authority.py"
 
       - name: Commit and push updated RSS
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add "Ministry of Foreign Affairs of China.xml" "China Maritime Safety Administration.xml" "World Trade Organization.xml" "International Maritime Organization.xml" "Pacific Islands Forum.xml"
+          git add "Ministry of Foreign Affairs of China.xml" "China Maritime Safety Administration.xml" "World Trade Organization.xml" "International Maritime Organization.xml" "Pacific Islands Forum.xml" "International Seabed Authority.xml"
           git diff --cached --quiet || (
             git commit -m "🔄 Update RSS feed" && \
             git pull --rebase && \
