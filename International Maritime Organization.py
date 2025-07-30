@@ -192,35 +192,36 @@ for formatted_date, title, news_str, full_link in all_news:
     except:
         continue  # 跳过格式不对的日期
 
+# 翻译后的缓存
+translated_news = []
 for formatted_date, title, news_str, full_link in recent_news:
     translation_title = get_news_title(title)
     summary = get_news_summary(news_str)
+    translated_news.append((formatted_date, translation_title, summary, full_link))
+
     print(f"时间：{formatted_date}")
     print(f"题目：{translation_title}")
     print(f"摘要：{summary}")
     print(f"链接：{full_link}")
-    print()  # 空行分隔
+    print()
     time_module.sleep(0.5)  # 避免API限制
 
-# 创建 Feed
+# 构建 RSS Feed
 fg = FeedGenerator()
 fg.title("国际海事组织 RSS")
 fg.link(href="https://www.imo.org", rel="alternate")
 fg.description("由自定义爬虫抓取的国际海事组织最新新闻摘要")
 fg.language('zh-cn')
 
-# 添加每条新闻
-for formatted_date, title, news_str, full_link in recent_news:
+# 添加翻译后的新闻
+for formatted_date, trans_title, trans_summary, full_link in translated_news:
     fe = fg.add_entry()
-    fe.title(translation_title)  # 如果需要可加标签前缀
+    fe.title(trans_title)
     fe.link(href=full_link)
-    fe.description(get_news_summary(summary))
-    fe.pubDate(formatted_date + "T08:00:00+08:00")  # ISO时间格式
+    fe.description(trans_summary)
+    fe.pubDate(formatted_date + "T08:00:00+08:00")
 
-
-# 保存成 XML 文件
 fg.rss_file('International Maritime Organization.xml', encoding='utf-8')
-
 print("✅ RSS Feed 文件已生成： International Maritime Organization.xml")
 
 
