@@ -133,7 +133,7 @@ for date_fmt, title, news, full_url in today_news:
 # 获取今天日期
 today = datetime.now()
 # 获取14天前的日期
-fourteen_days_ago = today - timedelta(days=10)
+fourteen_days_ago = today - timedelta(days=50)
 
 # 筛选最近14天内新闻
 recent_news = []
