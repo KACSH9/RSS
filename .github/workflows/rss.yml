@@ -32,12 +32,14 @@ jobs:
           python "International Maritime Organization.py"   
           python "Pacific Islands Forum.py"
           python "International Seabed Authority.py"
+          python "Center for Strategic and International Studies.py"
+          python "Japanese Foreign Ministry.py"
 
       - name: Commit and push updated RSS
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add "Ministry of Foreign Affairs of China.xml" "China Maritime Safety Administration.xml" "World Trade Organization.xml" "International Maritime Organization.xml" "Pacific Islands Forum.xml" "International Seabed Authority.xml"
+          git add "Ministry of Foreign Affairs of China.xml" "China Maritime Safety Administration.xml" "World Trade Organization.xml" "International Maritime Organization.xml" "Pacific Islands Forum.xml" "International Seabed Authority.xml" "Center for Strategic and International Studies.xml" "Japanese Foreign Ministry.xml"
           git diff --cached --quiet || (
             git commit -m "🔄 Update RSS feed" && \
             git pull --rebase && \
