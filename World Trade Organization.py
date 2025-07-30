@@ -102,12 +102,13 @@ fg.description("由自定义爬虫抓取的世界贸易组织最新新闻摘要"
 fg.language('zh-cn')
 
 # 添加每条新闻
-for time, title, url, news, section in recent_news:
+for date, title, intro, link in recent_news:
     fe = fg.add_entry()
-    fe.title(f"[{section}] {title}")
-    fe.link(href=url)
-    fe.description(get_news_summary(news))  # 也可直接填 news
-    fe.pubDate(time + "T08:00:00+08:00")  # ISO 格式时间
+    fe.title(title)  # 如果需要可加标签前缀
+    fe.link(href=link)
+    fe.description(get_news_summary(intro))
+    fe.pubDate(date + "T08:00:00+08:00")  # ISO时间格式
+
 
 # 保存成 XML 文件
 fg.rss_file(' World Trade Organization.xml', encoding='utf-8')
